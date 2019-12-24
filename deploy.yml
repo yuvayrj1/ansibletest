@@ -1,0 +1,28 @@
+---
+- hosts: test-server
+  become: yes
+  vars:
+    - homeDir: /home/ubuntu/
+    - appDir : ansible
+
+  tasks:
+  - name: Git - Cloning/Syncing repository from CodeCommit
+    git:
+      repo: "https://github.com/yuvayrj1/ansibletest.git"
+      dest: "{{homeDir}}/{{appDir}}"
+        
+
+  - name: Running NPM install
+    npm: path={{homeDir}}/{{appDir}}/ansibletest
+    register: npm_finished
+
+
+  - name: Start APP
+    command:  forever start app.js
+    ignore_errors: yes
+
+  - name: backup to backup dir
+    command: "{{ item }}"
+    with_items:
+        - cp -r /{{homeDir}}/{{appDir}}/ /tmp/{{appDir}}_rollback
+

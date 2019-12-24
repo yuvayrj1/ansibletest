@@ -1,0 +1,26 @@
+---
+- hosts: test_server
+  become: yes
+  vars:
+    - homeDir: /home/aximsoft/
+    - appDir : ansible
+       
+  tasks:
+  
+  - name: roll_back
+    command: "{{ item }}"
+    with_items:
+        - cp -r /{{homeDir}}/{{appDir}}/ /tmp/{{appDir}}_rollback_failure
+          rm -rf * /{{homeDir}}/{{appDir}} 
+          cp -r /tmp//{{appDir}}_rollback /{{homeDir}}/{{appDir}}
+          
+  - name: Running NPM install
+    npm: path={{homeDir}}/{{appDir}}/
+    register: npm_finished
+    
+  - name: Start APP
+    command:  forever start app.js
+    ignore_errors: yes
+  
+        
+
