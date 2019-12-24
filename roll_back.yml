@@ -2,7 +2,7 @@
 - hosts: localhost
   become: yes
   vars:
-    - homeDir: /home/aximsoft/
+    - homeDir: /home/ubuntu/
     - appDir : ansible
        
   tasks:
