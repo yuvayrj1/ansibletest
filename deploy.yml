@@ -1,5 +1,5 @@
 ---
-- hosts: test-server
+- hosts: localhost
   become: yes
   vars:
     - homeDir: /home/ubuntu/
@@ -13,12 +13,14 @@
         
 
   - name: Running NPM install
-    npm: path={{homeDir}}/{{appDir}}/ansibletest
+    npm: path={{homeDir}}/{{appDir}}
     register: npm_finished
 
 
   - name: Start APP
-    command:  forever start app.js
+    command: "{{item}}" 
+    with_items:
+        - forever start {{homeDir}}/{{appDir}}/app.js
     ignore_errors: yes
 
   - name: backup to backup dir
